@@ -1,2 +1,22 @@
 ---
 # tasks file for ansible-role-hostname
+
+- block:
+
+  - name: set hostname
+    hostname:
+      name: "{{ hostname_fqdn }}"
+
+  - name: patch files
+    lineinfile:
+      path: "{{ item.path | default('/etc/hosts') }}"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      owner: "{{ item.owner | default('root') }}"
+      group: "{{ item.group | default('root') }}"
+      mode: "{{ item.mode | default('u=rw,go=r') }}"
+    with_items: "{{ hostname_hosts_changes }}"
+
+  become: true
+  tags:
+    - hostname

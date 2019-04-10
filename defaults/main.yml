@@ -1,2 +1,10 @@
 ---
 # defaults file for ansible-role-hostname
+
+hostname_fqdn: "{{ inventory_hostname }}"
+hostname_short: "{{ inventory_hostname_short }}"
+
+hostname_hosts_backup: false
+hostname_hosts_changes:
+  - regexp: "^{{ ansible_default_ipv4.address }}"
+    line: "{{ ansible_default_ipv4.address }}\t{{ hostname_fqdn }}{{ (hostname_fqdn == hostname_short) | ternary('', '\t%s' % hostname_short) }}"
